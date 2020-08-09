@@ -4,5 +4,7 @@ package userproto;
 import "user_message.proto";
 
 service FinanceService {
-    rpc Signup (RequestMessage) returns (ResponseMessage);
+    rpc SignIn (RequestMessage) returns (ResponseMessage);
+    rpc SignUp (RequestMessage) returns (ResponseMessage);
+    rpc Verify (RequestMessage) returns (ResponseMessage);
 }

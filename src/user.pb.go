@@ -29,15 +29,16 @@ func init() {
 }
 
 var fileDescriptor_116e343673f7ffaf = []byte{
-	// 116 bytes of a gzipped FileDescriptorProto
+	// 132 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2a, 0x2d, 0x4e, 0x2d,
 	0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x04, 0xb1, 0xc1, 0x4c, 0x29, 0x21, 0x10, 0x33,
-	0x3e, 0x37, 0xb5, 0xb8, 0x38, 0x31, 0x3d, 0x15, 0x22, 0x6d, 0x14, 0xc8, 0xc5, 0xe7, 0x96, 0x99,
-	0x97, 0x98, 0x97, 0x9c, 0x1a, 0x9c, 0x5a, 0x54, 0x96, 0x99, 0x9c, 0x2a, 0x64, 0xcf, 0xc5, 0x16,
-	0x9c, 0x99, 0x9e, 0x57, 0x5a, 0x20, 0x24, 0xa9, 0x07, 0xd7, 0xab, 0x17, 0x94, 0x5a, 0x58, 0x9a,
-	0x5a, 0x5c, 0xe2, 0x0b, 0xd1, 0x2c, 0x25, 0x85, 0x22, 0x55, 0x5c, 0x90, 0x9f, 0x57, 0x9c, 0x0a,
-	0x95, 0x4b, 0x62, 0x03, 0x0b, 0x1b, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0x71, 0x2f, 0xe7, 0xd9,
-	0x86, 0x00, 0x00, 0x00,
+	0x3e, 0x37, 0xb5, 0xb8, 0x38, 0x31, 0x3d, 0x15, 0x22, 0x6d, 0x74, 0x99, 0x91, 0x8b, 0xcf, 0x2d,
+	0x33, 0x2f, 0x31, 0x2f, 0x39, 0x35, 0x38, 0xb5, 0xa8, 0x2c, 0x33, 0x39, 0x55, 0xc8, 0x9e, 0x8b,
+	0x2d, 0x38, 0x33, 0x3d, 0xcf, 0x33, 0x4f, 0x48, 0x52, 0x0f, 0xae, 0x59, 0x2f, 0x28, 0xb5, 0xb0,
+	0x34, 0xb5, 0xb8, 0xc4, 0x17, 0xa2, 0x5b, 0x4a, 0x0a, 0x45, 0xaa, 0xb8, 0x20, 0x3f, 0xaf, 0x38,
+	0x15, 0x2a, 0x07, 0x33, 0x20, 0xb4, 0x80, 0x02, 0x03, 0xc2, 0x52, 0x8b, 0x32, 0xd3, 0x2a, 0xc9,
+	0x34, 0x20, 0x89, 0x0d, 0x2c, 0x6c, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0x6c, 0x26, 0xc3, 0x4a,
+	0x09, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -52,7 +53,9 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type FinanceServiceClient interface {
-	Signup(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error)
+	SignIn(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error)
+	SignUp(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error)
+	Verify(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error)
 }
 
 type financeServiceClient struct {
@@ -63,9 +66,27 @@ func NewFinanceServiceClient(cc grpc.ClientConnInterface) FinanceServiceClient {
 	return &financeServiceClient{cc}
 }
 
-func (c *financeServiceClient) Signup(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error) {
+func (c *financeServiceClient) SignIn(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error) {
 	out := new(ResponseMessage)
-	err := c.cc.Invoke(ctx, "/userproto.FinanceService/Signup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/userproto.FinanceService/SignIn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *financeServiceClient) SignUp(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error) {
+	out := new(ResponseMessage)
+	err := c.cc.Invoke(ctx, "/userproto.FinanceService/SignUp", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *financeServiceClient) Verify(ctx context.Context, in *RequestMessage, opts ...grpc.CallOption) (*ResponseMessage, error) {
+	out := new(ResponseMessage)
+	err := c.cc.Invoke(ctx, "/userproto.FinanceService/Verify", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,35 +95,79 @@ func (c *financeServiceClient) Signup(ctx context.Context, in *RequestMessage, o
 
 // FinanceServiceServer is the server API for FinanceService service.
 type FinanceServiceServer interface {
-	Signup(context.Context, *RequestMessage) (*ResponseMessage, error)
+	SignIn(context.Context, *RequestMessage) (*ResponseMessage, error)
+	SignUp(context.Context, *RequestMessage) (*ResponseMessage, error)
+	Verify(context.Context, *RequestMessage) (*ResponseMessage, error)
 }
 
 // UnimplementedFinanceServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedFinanceServiceServer struct {
 }
 
-func (*UnimplementedFinanceServiceServer) Signup(ctx context.Context, req *RequestMessage) (*ResponseMessage, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Signup not implemented")
+func (*UnimplementedFinanceServiceServer) SignIn(ctx context.Context, req *RequestMessage) (*ResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
+}
+func (*UnimplementedFinanceServiceServer) SignUp(ctx context.Context, req *RequestMessage) (*ResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
+}
+func (*UnimplementedFinanceServiceServer) Verify(ctx context.Context, req *RequestMessage) (*ResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Verify not implemented")
 }
 
 func RegisterFinanceServiceServer(s *grpc.Server, srv FinanceServiceServer) {
 	s.RegisterService(&_FinanceService_serviceDesc, srv)
 }
 
-func _FinanceService_Signup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FinanceService_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RequestMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FinanceServiceServer).Signup(ctx, in)
+		return srv.(FinanceServiceServer).SignIn(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userproto.FinanceService/Signup",
+		FullMethod: "/userproto.FinanceService/SignIn",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FinanceServiceServer).Signup(ctx, req.(*RequestMessage))
+		return srv.(FinanceServiceServer).SignIn(ctx, req.(*RequestMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FinanceService_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FinanceServiceServer).SignUp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userproto.FinanceService/SignUp",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FinanceServiceServer).SignUp(ctx, req.(*RequestMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FinanceService_Verify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FinanceServiceServer).Verify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/userproto.FinanceService/Verify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FinanceServiceServer).Verify(ctx, req.(*RequestMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -112,8 +177,16 @@ var _FinanceService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*FinanceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Signup",
-			Handler:    _FinanceService_Signup_Handler,
+			MethodName: "SignIn",
+			Handler:    _FinanceService_SignIn_Handler,
+		},
+		{
+			MethodName: "SignUp",
+			Handler:    _FinanceService_SignUp_Handler,
+		},
+		{
+			MethodName: "Verify",
+			Handler:    _FinanceService_Verify_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
