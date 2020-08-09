@@ -1,4 +1,4 @@
-module user-proto
+module github.com/Juno-chat-app/user-proto
 
 go 1.13
 
