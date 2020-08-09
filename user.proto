@@ -1,8 +1,0 @@
-syntax = "proto3";
-package userproto;
-
-import "user_message.proto";
-
-service FinanceService {
-    rpc Signup (RequestMessage) returns (ResponseMessage);
-}
