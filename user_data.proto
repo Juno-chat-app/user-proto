@@ -13,6 +13,10 @@ message SignInRequest {
     string Password = 2;
 }
 
+message ValidateRequest {
+    string BearerToken = 1;
+}
+
 message RefreshRequest {
     string RefreshToken = 1;
 }
